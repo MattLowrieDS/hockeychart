@@ -1,0 +1,12 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-merriweather), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: linear-gradient(135deg, #e0f2f1 0%, #cfd8dc 100%) !important; /* Icy ice color */
+  min-height: 100vh;
+  color: #1a365d;
+}
