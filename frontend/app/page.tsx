@@ -88,6 +88,10 @@ export default function Home() {
           <PlayerRadarChart playerData={playerData} />
         )}
       </main>
+
+      <footer className="app-footer">
+        <p>Data provided by <a href="https://moneypuck.com/data.htm" target="_blank" rel="noopener noreferrer">moneypuck.com</a></p>
+      </footer>
     </div>
   )
 }

@@ -58,3 +58,20 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+.app-footer {
+  margin-top: 4rem;
+  padding-bottom: 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #718096;
+}
+
+.app-footer a {
+  color: #3182ce;
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}
