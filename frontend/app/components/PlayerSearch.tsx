@@ -6,9 +6,11 @@ import './PlayerSearch.css'
 
 interface PlayerSearchProps {
   onSearch: (playerName: string) => void
+  className?: string
+  placeholder?: string
 }
 
-function PlayerSearch({ onSearch }: PlayerSearchProps) {
+function PlayerSearch({ onSearch, className, placeholder }: PlayerSearchProps) {
   const [playerName, setPlayerName] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -55,10 +57,8 @@ function PlayerSearch({ onSearch }: PlayerSearchProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (playerName.trim()) {
-      onSearch(playerName)
-      setShowSuggestions(false)
-    }
+    onSearch(playerName.trim())
+    setShowSuggestions(false)
   }
 
   const handleSuggestionClick = (name: string) => {
@@ -69,11 +69,11 @@ function PlayerSearch({ onSearch }: PlayerSearchProps) {
 
   return (
     <div className="player-search-container" ref={dropdownRef}>
-      <form className="player-search" onSubmit={handleSubmit}>
+      <form className={`player-search ${className || ''}`} onSubmit={handleSubmit}>
         <div className="input-wrapper">
           <input
             type="text"
-            placeholder="Search for a player (e.g., MacKinnon, Ovechkin)"
+            placeholder={placeholder || "Search for a player (e.g., MacKinnon, Ovechkin)"}
             value={playerName}
             onChange={(e) => {
               setPlayerName(e.target.value)

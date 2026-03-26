@@ -12,39 +12,20 @@ import {
 } from 'recharts'
 import './PlayerRadarChart.css'
 
-interface PlayerRadarChartProps {
-  playerData: {
-    name: string
-    position: string
-    team: string
-    nationality: string
-    stats: Record<string, number>
-  }
+interface PlayerData {
+  name: string
+  position: string
+  team: string
+  nationality: string
+  stats: Record<string, number>
 }
 
-function PlayerRadarChart({ playerData }: PlayerRadarChartProps) {
-  const { name, position, team, nationality, stats } = playerData
+interface PlayerRadarChartProps {
+  player1: PlayerData | null
+  player2: PlayerData | null
+}
 
-  // Stats for the grid display (raw values)
-  const statsForGrid = [
-    { label: 'P/60', value: stats.p_60, rank: stats.p_60_rank, format: 'decimal' },
-    { label: 'Goals', value: stats.goals, rank: stats.goals_rank, format: 'integer' },
-    { label: 'Assists', value: stats.assists, rank: stats.assists_rank, format: 'integer' },
-    { label: 'xG', value: stats.xg, rank: stats.xg_rank, format: 'decimal' },
-    { label: 'Corsi For %', value: stats.corsi_for_pct, rank: stats.corsi_rank, format: 'percent' },
-    { label: 'High Danger Shots', value: stats.high_danger_shots, rank: stats.hds_rank, format: 'integer' },
-  ]
-
-  // Normalized rank values for radar chart (0-100 scale)
-  const statsForChart = [
-    { stat: 'P/60', value: stats.p_60_rank_norm ?? 0, fullMark: 100 },
-    { stat: 'Goals', value: stats.goals_rank_norm ?? 0, fullMark: 100 },
-    { stat: 'Assists', value: stats.assists_rank_norm ?? 0, fullMark: 100 },
-    { stat: 'High Danger Shots', value: stats.hds_rank_norm ?? 0, fullMark: 100 },
-    { stat: 'xG', value: stats.xg_rank_norm ?? 0, fullMark: 100 },
-    { stat: 'CF%', value: stats.corsi_rank_norm ?? 0, fullMark: 100 },
-  ]
-
+function PlayerRadarChart({ player1, player2 }: PlayerRadarChartProps) {
   const formatValue = (value: number, format: string) => {
     switch (format) {
       case 'decimal':
@@ -56,41 +37,41 @@ function PlayerRadarChart({ playerData }: PlayerRadarChartProps) {
     }
   }
 
-  return (
-    <div className="radar-chart-container">
+  const getStatsForGrid = (player: PlayerData) => [
+    { label: 'P/60', value: player.stats.p_60, rank: player.stats.p_60_rank, format: 'decimal' },
+    { label: 'Goals', value: player.stats.goals, rank: player.stats.goals_rank, format: 'integer' },
+    { label: 'Assists', value: player.stats.assists, rank: player.stats.assists_rank, format: 'integer' },
+    { label: 'xG', value: player.stats.xg, rank: player.stats.xg_rank, format: 'decimal' },
+    { label: 'Corsi For %', value: player.stats.corsi_for_pct, rank: player.stats.corsi_rank, format: 'percent' },
+    { label: 'High Danger Shots', value: player.stats.high_danger_shots, rank: player.stats.hds_rank, format: 'integer' },
+  ]
+
+  const statsLabels = [
+    { key: 'p_60_rank_norm', label: 'P/60' },
+    { key: 'goals_rank_norm', label: 'Goals' },
+    { key: 'assists_rank_norm', label: 'Assists' },
+    { key: 'hds_rank_norm', label: 'HDS' },
+    { key: 'xg_rank_norm', label: 'xG' },
+    { key: 'corsi_rank_norm', label: 'CF%' },
+  ]
+
+  const statsForChart = statsLabels.map(stat => ({
+    stat: stat.label,
+    player1: player1?.stats[stat.key] ?? 0,
+    player2: player2?.stats[stat.key] ?? 0,
+  }))
+
+  const PlayerStatsGrid = ({ player, colorClass }: { player: PlayerData, colorClass: string }) => (
+    <div className={`player-stats-section ${colorClass}`}>
       <div className="player-info">
-        <h2>{name}</h2>
+        <h2>{player.name}</h2>
         <div className="player-details">
-          <span className="position">Position: {position}</span>
-          <span className="team">Team: {team}</span>
+          <span className="position">Position: {player.position}</span>
+          <span className="team">Team: {player.team}</span>
         </div>
       </div>
-
-      <div className="radar-chart-wrapper">
-        <ResponsiveContainer width="100%" height={450}>
-          <RadarChart cx="50%" cy="50%" outerRadius="70%" data={statsForChart}>
-            <PolarGrid stroke="#3a7bd5" />
-            <PolarAngleAxis
-              dataKey="stat"
-              tick={{ fill: '#3a7bd5', fontSize: 18 }}
-            />
-            <Radar
-              name="League rank in even strength scenarios"
-              dataKey="value"
-              stroke="#00d2ff"
-              fill="#00d2ff"
-              fillOpacity={0.5}
-            />
-            <Legend
-              verticalAlign="bottom"
-              height={50}
-            />
-          </RadarChart>
-        </ResponsiveContainer>
-      </div>
-
       <div className="stats-grid">
-        {statsForGrid.map((item) => (
+        {getStatsForGrid(player).map((item) => (
           <div key={item.label} className="stat-item">
             <div className="stat-row">
               <span className="stat-label">{item.label}</span>
@@ -104,6 +85,47 @@ function PlayerRadarChart({ playerData }: PlayerRadarChartProps) {
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="radar-chart-container">
+      <div className="radar-chart-wrapper">
+        <ResponsiveContainer width="100%" height={450}>
+          <RadarChart cx="50%" cy="50%" outerRadius="70%" data={statsForChart}>
+            <PolarGrid stroke="#3a7bd5" />
+            <PolarAngleAxis
+              dataKey="stat"
+              tick={{ fill: '#3a7bd5', fontSize: 18 }}
+            />
+            {player1 && (
+              <Radar
+                name={player1.name}
+                dataKey="player1"
+                stroke="#00d2ff"
+                fill="#00d2ff"
+                fillOpacity={0.4}
+              />
+            )}
+            {player2 && (
+              <Radar
+                name={player2.name}
+                dataKey="player2"
+                stroke="#ff00ff"
+                fill="#ff00ff"
+                fillOpacity={0.4}
+              />
+            )}
+            <Legend verticalAlign="bottom" height={50} />
+            <Tooltip />
+          </RadarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="players-grids-container">
+        {player1 && <PlayerStatsGrid player={player1} colorClass="player1-stats" />}
+        {player2 && <PlayerStatsGrid player={player2} colorClass="player2-stats" />}
       </div>
     </div>
   )

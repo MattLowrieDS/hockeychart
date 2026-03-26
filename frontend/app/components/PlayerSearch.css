@@ -111,6 +111,31 @@
   color: #2b6cb0;
 }
 
+.player-search.magenta {
+  border-color: #ff00ff;
+}
+
+.player-search.magenta:focus-within {
+  border-color: #ff00ff;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+}
+
+.player-search.magenta .search-button {
+  border-left-color: rgba(255, 0, 255, 0.2);
+  color: #ff00ff;
+  background: rgba(255, 0, 255, 0.05);
+}
+
+.player-search.magenta .search-button:hover {
+  background: #ff00ff;
+  color: #ffffff;
+}
+
+.player-search.magenta .input-spinner {
+  border-color: #ff00ff;
+  border-top-color: transparent;
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
@@ -126,3 +151,4 @@
     width: 54px;
   }
 }
+

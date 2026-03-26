@@ -36,27 +36,46 @@ interface PlayerData {
 }
 
 export default function Home() {
-  const [playerData, setPlayerData] = useState<PlayerData | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [player1, setPlayer1] = useState<PlayerData | null>(null)
+  const [player2, setPlayer2] = useState<PlayerData | null>(null)
+  const [loading1, setLoading1] = useState(false)
+  const [loading2, setLoading2] = useState(false)
+  const [error1, setError1] = useState<string | null>(null)
+  const [error2, setError2] = useState<string | null>(null)
 
-  const searchPlayer = async (playerName: string) => {
-    if (!playerName.trim()) return
-
-    setLoading(true)
-    setError(null)
-    setPlayerData(null)
-
+  const searchPlayer1 = async (playerName: string) => {
+    if (!playerName) {
+      setPlayer1(null)
+      setError1(null)
+      return
+    }
+    setLoading1(true)
+    setError1(null)
     try {
       const response = await axios.get(`/api/player/${encodeURIComponent(playerName)}`)
-      setPlayerData(response.data)
+      setPlayer1(response.data)
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error && 'response' in err 
-        ? (err as { response?: { data?: { detail?: string } } }).response?.data?.detail || 'Failed to fetch player stats'
-        : 'Failed to fetch player stats'
-      setError(errorMessage)
+      setError1('Failed to fetch player stats')
     } finally {
-      setLoading(false)
+      setLoading1(false)
+    }
+  }
+
+  const searchPlayer2 = async (playerName: string) => {
+    if (!playerName) {
+      setPlayer2(null)
+      setError2(null)
+      return
+    }
+    setLoading2(true)
+    setError2(null)
+    try {
+      const response = await axios.get(`/api/player/${encodeURIComponent(playerName)}`)
+      setPlayer2(response.data)
+    } catch (err: unknown) {
+      setError2('Failed to fetch player stats')
+    } finally {
+      setLoading2(false)
     }
   }
 
@@ -64,28 +83,27 @@ export default function Home() {
     <div className="app">
       <header className="app-header">
         <h1>Hockey Radar Charts</h1>
-        <p>Search for a player to view their stats</p>
+        <p>Compare two players to view their stats</p>
         <p className="note">Note: Data only contains forwards from the 2024 season</p>
       </header>
 
       <main className="app-main">
-        <PlayerSearch onSearch={searchPlayer} />
+        <div className="search-section">
+          <PlayerSearch onSearch={searchPlayer1} />
+          {error1 && <div className="error"><p>❌ {error1}</p></div>}
+          {loading1 && <div className="loading-small"><div className="spinner"></div></div>}
+          
+          <PlayerSearch 
+            onSearch={searchPlayer2} 
+            className="magenta" 
+            placeholder="Choose another player for comparison"
+          />
+          {error2 && <div className="error"><p>❌ {error2}</p></div>}
+          {loading2 && <div className="loading-small"><div className="spinner"></div></div>}
+        </div>
 
-        {loading && (
-          <div className="loading">
-            <div className="spinner"></div>
-            <p>Loading player stats...</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="error">
-            <p>❌ {error}</p>
-          </div>
-        )}
-
-        {playerData && (
-          <PlayerRadarChart playerData={playerData} />
+        {(player1 || player2) && (
+          <PlayerRadarChart player1={player1} player2={player2} />
         )}
       </main>
 
