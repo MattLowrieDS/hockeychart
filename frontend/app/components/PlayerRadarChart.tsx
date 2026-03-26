@@ -50,7 +50,7 @@ function PlayerRadarChart({ player1, player2 }: PlayerRadarChartProps) {
     { key: 'p_60_rank_norm', label: 'P/60' },
     { key: 'goals_rank_norm', label: 'Goals' },
     { key: 'assists_rank_norm', label: 'Assists' },
-    { key: 'hds_rank_norm', label: 'HDS' },
+    { key: 'hds_rank_norm', label: 'High Danger Shots' },
     { key: 'xg_rank_norm', label: 'xG' },
     { key: 'corsi_rank_norm', label: 'CF%' },
   ]
