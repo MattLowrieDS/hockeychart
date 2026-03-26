@@ -15,7 +15,7 @@ Key Operations:
 5. Outputs a cleaned CSV containing both raw stats and normalized rankings.
 
 Usage:
-    python data/mp_forwards_5on5.py --input_filename skaters.csv --output_filename forwards_2024.csv
+    python mp_forwards_5on5.py --input_filename skaters.csv --output_filename forwards_2024.csv
 """
 
 import argparse

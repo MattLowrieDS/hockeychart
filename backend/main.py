@@ -9,7 +9,7 @@ from typing import List
 load_dotenv()
 
 # Load hockey data
-DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'forwards_5on5_2024.csv')
+DATA_PATH = os.path.join(os.path.dirname(__file__), 'data', 'forwards_5on5_2024.csv')
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
